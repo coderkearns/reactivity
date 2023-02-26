@@ -19,9 +19,25 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // lib/index.js
 var lib_exports = {};
 __export(lib_exports, {
-  default: () => lib_default
+  Subscription: () => Subscription
 });
 module.exports = __toCommonJS(lib_exports);
-var lib_default = 3;
+
+// lib/subscription.js
+var Subscription = class {
+  constructor() {
+    this._subscribers = [];
+  }
+  subscribe(subscriber) {
+    this._subscribers.push(subscriber);
+  }
+  publish(...values) {
+    for (let subscriber of this._subscribers) {
+      subscriber(...values);
+    }
+  }
+};
 // Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {});
+0 && (module.exports = {
+  Subscription
+});

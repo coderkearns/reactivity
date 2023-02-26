@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../lib/subscription.js"],
+  "sourcesContent": ["export default class Subscription {\n    constructor() {\n        this._subscribers = []\n    }\n\n    subscribe(subscriber) {\n        this._subscribers.push(subscriber)\n    }\n\n    publish(...values) {\n        for (let subscriber of this._subscribers) {\n            subscriber(...values)\n        }\n    }\n}\n"],
+  "mappings": "MAAA,IAAqBA,EAArB,KAAkC,CAC9B,aAAc,CACV,KAAK,aAAe,CAAC,CACzB,CAEA,UAAUC,EAAY,CAClB,KAAK,aAAa,KAAKA,CAAU,CACrC,CAEA,WAAWC,EAAQ,CACf,QAASD,KAAc,KAAK,aACxBA,EAAW,GAAGC,CAAM,CAE5B,CACJ",
+  "names": ["Subscription", "subscriber", "values"]
+}
