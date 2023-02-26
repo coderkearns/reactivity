@@ -1,0 +1,28 @@
+{
+  "name": "@coderkearns/reactivity",
+  "version": "1.0.0",
+  "description": "My personal reactivity library",
+  "main": "lib/index.js",
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./lib/index.js"
+    },
+    "./*": "./*.js",
+    "./package": "./package.json",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "clean": "rm -rf dist cjs",
+    "build:web": "esbuild . --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js",
+    "build:cjs": "esbuild . --bundle --platform=node --target=node10.4 --outfile=cjs/index.js",
+    "build": "pnpm clean; pnpm build:web && pnpm build:cjs"
+  },
+  "repository": "coderkearns/reactivity",
+  "author": "coderkearns",
+  "license": "MIT",
+  "dependencies": {
+    "esbuild": "^0.17.10"
+  },
+  "files": ["dist", "lib"]
+}
