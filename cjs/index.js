@@ -19,7 +19,10 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // lib/index.js
 var lib_exports = {};
 __export(lib_exports, {
-  Subscription: () => Subscription
+  ReactiveArray: () => ReactiveArray,
+  ReactiveObject: () => ReactiveObject,
+  Subscription: () => Subscription,
+  Value: () => Value
 });
 module.exports = __toCommonJS(lib_exports);
 
@@ -37,7 +40,60 @@ var Subscription = class {
     }
   }
 };
+
+// lib/value.js
+var Value = class extends Subscription {
+  constructor(initialValue) {
+    super();
+    this._value = initialValue;
+  }
+  get() {
+    return this._value;
+  }
+  set(value) {
+    this._value = value;
+    this.publish(this._value);
+  }
+  static() {
+    return this._value;
+  }
+};
+
+// lib/array.js
+var ReactiveArray = class extends Subscription {
+  constructor(initialArray) {
+    super();
+    this._internal = [];
+    for (const item of initialArray) {
+    }
+  }
+  static() {
+    return this._internal.map((item) => item.static());
+  }
+  // TODO: implement all the stuff
+};
+
+// lib/object.js
+var ReactiveObject = class extends Subscription {
+  constructor(initialObject) {
+    super();
+    this._internal = {};
+    for (const key in initialObject) {
+      const value = initialObject[key];
+    }
+  }
+  static() {
+    const _static = {};
+    for (const key in this._internal) {
+      _static[key] = this._internal[key].static();
+    }
+  }
+  // TODO: implement all the stuff
+};
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  Subscription
+  ReactiveArray,
+  ReactiveObject,
+  Subscription,
+  Value
 });
