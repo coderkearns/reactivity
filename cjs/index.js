@@ -21,8 +21,8 @@ var lib_exports = {};
 __export(lib_exports, {
   ReactiveArray: () => ReactiveArray,
   ReactiveObject: () => ReactiveObject,
-  Subscription: () => Subscription,
-  Value: () => Value
+  ReactiveValue: () => ReactiveValue,
+  Subscription: () => Subscription
 });
 module.exports = __toCommonJS(lib_exports);
 
@@ -39,10 +39,18 @@ var Subscription = class {
       subscriber(...values);
     }
   }
+  // I want to do something like this, but it would cause circular dependencies:
+  static from(item) {
+    if (typeof item === "object") {
+      if (Array.isArray(item)) {
+      } else {
+      }
+    }
+  }
 };
 
 // lib/value.js
-var Value = class extends Subscription {
+var ReactiveValue = class extends Subscription {
   constructor(initialValue) {
     super();
     this._value = initialValue;
@@ -94,6 +102,6 @@ var ReactiveObject = class extends Subscription {
 0 && (module.exports = {
   ReactiveArray,
   ReactiveObject,
-  Subscription,
-  Value
+  ReactiveValue,
+  Subscription
 });
