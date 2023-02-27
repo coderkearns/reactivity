@@ -26,29 +26,6 @@ __export(lib_exports, {
 });
 module.exports = __toCommonJS(lib_exports);
 
-// lib/subscription.js
-var Subscription = class {
-  constructor() {
-    this._subscribers = [];
-  }
-  subscribe(subscriber) {
-    this._subscribers.push(subscriber);
-  }
-  publish(...values) {
-    for (let subscriber of this._subscribers) {
-      subscriber(...values);
-    }
-  }
-  // I want to do something like this, but it would cause circular dependencies:
-  static from(item) {
-    if (typeof item === "object") {
-      if (Array.isArray(item)) {
-      } else {
-      }
-    }
-  }
-};
-
 // lib/value.js
 var ReactiveValue = class extends Subscription {
   constructor(initialValue) {
@@ -73,6 +50,7 @@ var ReactiveArray = class extends Subscription {
     super();
     this._internal = [];
     for (const item of initialArray) {
+      this._internal.push(Subscription.from(item));
     }
   }
   static() {
@@ -87,7 +65,7 @@ var ReactiveObject = class extends Subscription {
     super();
     this._internal = {};
     for (const key in initialObject) {
-      const value = initialObject[key];
+      this._internal[key] = Subscription.from(initialObject[key]);
     }
   }
   static() {
@@ -97,6 +75,31 @@ var ReactiveObject = class extends Subscription {
     }
   }
   // TODO: implement all the stuff
+};
+
+// lib/subscription.js
+var Subscription = class {
+  constructor() {
+    this._subscribers = [];
+  }
+  subscribe(subscriber) {
+    this._subscribers.push(subscriber);
+  }
+  publish(...values) {
+    for (let subscriber of this._subscribers) {
+      subscriber(...values);
+    }
+  }
+  static from(item) {
+    if (typeof item === "object") {
+      if (Array.isArray(item)) {
+        return new ReactiveArray(item);
+      } else {
+        return new ReactiveObject(item);
+      }
+    }
+    return new ReactiveValue(item);
+  }
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
