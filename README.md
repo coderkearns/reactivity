@@ -8,20 +8,17 @@ TODO: more description lol
 
 ### Installing
 
-You can install directly from this repo using one of the following commands:
+You can install from npm:
+
+```
+$ npm install -s @coderkearns/reactivity
+```
+
+Or directly from this repository for bleeding-edge features:
 
 ```
 $ npm install -s git+github.com/coderkearns/reactivity
 ```
-
-```
-$ yarn add -s git+github.com/coderkearns/reactivity
-```
-
-```
-$ pnpm add -s git+github.com/coderkearns/reactivity
-```
-
 
 ## License
 
