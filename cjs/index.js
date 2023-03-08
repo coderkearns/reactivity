@@ -22,7 +22,11 @@ __export(lib_exports, {
   ReactiveArray: () => ReactiveArray,
   ReactiveObject: () => ReactiveObject,
   ReactiveValue: () => ReactiveValue,
-  Subscription: () => Subscription
+  Subscription: () => Subscription,
+  a: () => factory2,
+  o: () => factory3,
+  s: () => factory,
+  v: () => factory4
 });
 module.exports = __toCommonJS(lib_exports);
 
@@ -40,6 +44,9 @@ var Subscription = class {
     }
   }
 };
+function factory() {
+  return new Subscriber();
+}
 
 // lib/array.js
 var ReactiveArray = class extends Subscription {
@@ -71,6 +78,9 @@ var ReactiveArray = class extends Subscription {
     this.publish(value, `${key}`);
   }
 };
+function factory2(initialArray) {
+  return new ReactiveArray(initialArray);
+}
 
 // lib/object.js
 var ReactiveObject = class extends Subscription {
@@ -111,6 +121,9 @@ var ReactiveObject = class extends Subscription {
     return this._internal[key];
   }
 };
+function factory3(initialObject) {
+  return new ReactiveObject(initialObject);
+}
 
 // lib/shared.js
 function makeSubscription(item) {
@@ -141,10 +154,17 @@ var ReactiveValue = class extends Subscription {
     return this._value;
   }
 };
+function factory4(initialValue) {
+  return new ReactiveValue(initialValue);
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   ReactiveArray,
   ReactiveObject,
   ReactiveValue,
-  Subscription
+  Subscription,
+  a,
+  o,
+  s,
+  v
 });
