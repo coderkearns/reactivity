@@ -70,6 +70,12 @@ var ReactiveArray = class extends Subscription {
   static() {
     return this._internal.map((item) => item.static());
   }
+  set(newArr) {
+    this._internal.length = 0;
+    for (const value of newArr) {
+      this.publish(value);
+    }
+  }
   /* Array methods */
   push(value) {
     const key = this._internal.length;
@@ -109,15 +115,22 @@ var ReactiveObject = class extends Subscription {
   }
   /* Object methods */
   set(key, value) {
-    if (this._internal[key] !== void 0) {
-      this._internal[key].set(value);
+    if (value === void 0) {
+      for (const key2 in this._internal)
+        delete this._internal[key2];
+      for (const _key in key)
+        this.set(_key, key[_key]);
     } else {
-      const item = this._makeAndSubscribe(value, key);
-      this._internal[key] = item;
-      this.publish(value, key);
+      if (this._internal[key] !== void 0) {
+        this._internal[key].set(value);
+      } else {
+        const item = this._makeAndSubscribe(value, key);
+        this._internal[key] = item;
+        this.publish(value, key);
+      }
     }
   }
-  get(key) {
+  key(key) {
     return this._internal[key];
   }
 };
