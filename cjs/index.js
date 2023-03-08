@@ -43,27 +43,53 @@ var Subscription = class {
 
 // lib/array.js
 var ReactiveArray = class extends Subscription {
-  constructor(initialArray) {
+  constructor(initialArray = []) {
     super();
     this._internal = [];
-    for (const item of initialArray) {
-      this._internal.push(makeSubscription(item));
+    for (const value of initialArray) {
+      this.push(value);
     }
+  }
+  _makeSubscriberFunc(key) {
+    return (value, oldKey = null) => {
+      this.publish(value, oldKey ? `${key}.${oldKey}` : `${key}`);
+    };
+  }
+  _makeAndSubscribe(value, key) {
+    const item = makeSubscription(value);
+    item.subscribe(this._makeSubscriberFunc(key));
+    return item;
   }
   static() {
     return this._internal.map((item) => item.static());
   }
-  // TODO: implement all the stuff
+  /* Array methods */
+  push(value) {
+    const key = this._internal.length;
+    const item = this._makeAndSubscribe(item, key);
+    this._internal.push(item);
+    this.publish(value, `${key}`);
+  }
 };
 
 // lib/object.js
 var ReactiveObject = class extends Subscription {
-  constructor(initialObject) {
+  constructor(initialObject = {}) {
     super();
     this._internal = {};
     for (const key in initialObject) {
-      this._internal[key] = makeSubscription(initialObject[key]);
+      this.set(key, initialObject[key]);
     }
+  }
+  _makeSubscriberFunc(key) {
+    return (value, oldKey = null) => {
+      this.publish(value, oldKey ? `${key}.${oldKey}` : key);
+    };
+  }
+  _makeAndSubscribe(value, key) {
+    const item = makeSubscription(value);
+    item.subscribe(this._makeSubscriberFunc(key));
+    return item;
   }
   static() {
     const _static = {};
@@ -71,7 +97,19 @@ var ReactiveObject = class extends Subscription {
       _static[key] = this._internal[key].static();
     }
   }
-  // TODO: implement all the stuff
+  /* Object methods */
+  set(key, value) {
+    if (this._internal[key] !== void 0) {
+      this._internal[key].set(value);
+    } else {
+      const item = this._makeAndSubscribe(value, key);
+      this._internal[key] = item;
+      this.publish(value, key);
+    }
+  }
+  get(key) {
+    return this._internal[key];
+  }
 };
 
 // lib/shared.js
