@@ -26,6 +26,66 @@ __export(lib_exports, {
 });
 module.exports = __toCommonJS(lib_exports);
 
+// lib/subscription.js
+var Subscription = class {
+  constructor() {
+    this._subscribers = [];
+  }
+  subscribe(subscriber) {
+    this._subscribers.push(subscriber);
+  }
+  publish(...values) {
+    for (let subscriber of this._subscribers) {
+      subscriber(...values);
+    }
+  }
+};
+
+// lib/array.js
+var ReactiveArray = class extends Subscription {
+  constructor(initialArray) {
+    super();
+    this._internal = [];
+    for (const item of initialArray) {
+      this._internal.push(makeSubscription(item));
+    }
+  }
+  static() {
+    return this._internal.map((item) => item.static());
+  }
+  // TODO: implement all the stuff
+};
+
+// lib/object.js
+var ReactiveObject = class extends Subscription {
+  constructor(initialObject) {
+    super();
+    this._internal = {};
+    for (const key in initialObject) {
+      this._internal[key] = makeSubscription(initialObject[key]);
+    }
+  }
+  static() {
+    const _static = {};
+    for (const key in this._internal) {
+      _static[key] = this._internal[key].static();
+    }
+  }
+  // TODO: implement all the stuff
+};
+
+// lib/shared.js
+function makeSubscription(item) {
+  if (typeof item === "object") {
+    if (Array.isArray(item)) {
+      return new ReactiveArray(item);
+    } else {
+      return new ReactiveObject(item);
+    }
+  }
+  return new ReactiveValue(item);
+}
+
 // lib/value.js
 var ReactiveValue = class extends Subscription {
   constructor(initialValue) {
@@ -41,64 +101,6 @@ var ReactiveValue = class extends Subscription {
   }
   static() {
     return this._value;
-  }
-};
-
-// lib/array.js
-var ReactiveArray = class extends Subscription {
-  constructor(initialArray) {
-    super();
-    this._internal = [];
-    for (const item of initialArray) {
-      this._internal.push(Subscription.from(item));
-    }
-  }
-  static() {
-    return this._internal.map((item) => item.static());
-  }
-  // TODO: implement all the stuff
-};
-
-// lib/object.js
-var ReactiveObject = class extends Subscription {
-  constructor(initialObject) {
-    super();
-    this._internal = {};
-    for (const key in initialObject) {
-      this._internal[key] = Subscription.from(initialObject[key]);
-    }
-  }
-  static() {
-    const _static = {};
-    for (const key in this._internal) {
-      _static[key] = this._internal[key].static();
-    }
-  }
-  // TODO: implement all the stuff
-};
-
-// lib/subscription.js
-var Subscription = class {
-  constructor() {
-    this._subscribers = [];
-  }
-  subscribe(subscriber) {
-    this._subscribers.push(subscriber);
-  }
-  publish(...values) {
-    for (let subscriber of this._subscribers) {
-      subscriber(...values);
-    }
-  }
-  static from(item) {
-    if (typeof item === "object") {
-      if (Array.isArray(item)) {
-        return new ReactiveArray(item);
-      } else {
-        return new ReactiveObject(item);
-      }
-    }
-    return new ReactiveValue(item);
   }
 };
 // Annotate the CommonJS export names for ESM import in node:

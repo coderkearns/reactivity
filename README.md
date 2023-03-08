@@ -2,7 +2,7 @@
 
 My personal reactivity library.
 
-TODO: more description lol
+Heavily based on the **Observer** (also known as **Subscription**) design pattern.
 
 ## Getting Started
 
