@@ -73,7 +73,7 @@ var ReactiveArray = class extends Subscription {
   /* Array methods */
   push(value) {
     const key = this._internal.length;
-    const item = this._makeAndSubscribe(item, key);
+    const item = this._makeAndSubscribe(value, key);
     this._internal.push(item);
     this.publish(value, `${key}`);
   }
