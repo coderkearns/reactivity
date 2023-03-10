@@ -1,6 +1,6 @@
 {
   "name": "@coderkearns/reactivity",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "My personal reactivity library",
   "main": "lib/index.js",
   "exports": {
@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist cjs",
-    "build:web": "esbuild . --bundle --minify --sourcemap --target=chrome58,firefox57,safari11,edge16 --outfile=dist/index.js",
+    "build:web": "esbuild . --bundle --minify --sourcemap --target=es2015 --outfile=dist/index.js",
     "build:cjs": "esbuild . --bundle --minify --platform=node --target=node10.4 --outfile=cjs/index.js",
     "build": "pnpm clean; pnpm build:web && pnpm build:cjs",
     "publish-package": "pnpm build && pnpm publish --access=public"
