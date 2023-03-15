@@ -14,7 +14,7 @@
   },
   "scripts": {
     "clean": "rm -rf dist cjs",
-    "build:web": "esbuild . --bundle --minify --sourcemap --target=es2015 --outfile=dist/index.js",
+    "build:web": "esbuild . --bundle --minify --sourcemap --target=es2015 --global-name=Reactivity --outfile=dist/index.js",
     "build:cjs": "esbuild . --bundle --minify --platform=node --target=node10.4 --outfile=cjs/index.js",
     "build": "pnpm clean; pnpm build:web && pnpm build:cjs",
     "publish-package": "pnpm build && pnpm publish --access=public"
