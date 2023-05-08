@@ -1,33 +1,33 @@
 {
-  "name": "@coderkearns/reactivity",
-  "version": "3.2.0",
-  "description": "My personal reactivity library",
-  "main": "lib/index.js",
-  "exports": {
-    ".": {
-      "require": "./cjs/index.js",
-      "import": "./lib/index.js"
+    "name": "@coderkearns/reactivity",
+    "version": "3.3.0",
+    "description": "My personal reactivity library",
+    "main": "lib/index.js",
+    "exports": {
+        ".": {
+            "require": "./cjs/index.js",
+            "import": "./lib/index.js"
+        },
+        "./*": "./*.js",
+        "./package": "./package.json",
+        "./package.json": "./package.json"
     },
-    "./*": "./*.js",
-    "./package": "./package.json",
-    "./package.json": "./package.json"
-  },
-  "scripts": {
-    "clean": "rm -rf dist cjs",
-    "build:web": "esbuild . --bundle --minify --sourcemap --target=es2015 --global-name=Reactivity --outfile=dist/index.js",
-    "build:cjs": "esbuild . --bundle --minify --platform=node --target=node10.4 --outfile=cjs/index.js",
-    "build": "pnpm clean; pnpm build:web && pnpm build:cjs",
-    "publish-package": "pnpm build && pnpm publish --access=public"
-  },
-  "repository": "coderkearns/reactivity",
-  "author": "coderkearns",
-  "license": "MIT",
-  "dependencies": {
-    "esbuild": "^0.17.10"
-  },
-  "files": [
-    "cjs",
-    "dist",
-    "lib"
-  ]
+    "scripts": {
+        "clean": "rm -rf dist",
+        "build:ts": "tsc -b ./tsconfig.*.json",
+        "build:web": "esbuild ./dist/esm/index.js --bundle --minify --sourcemap --target=es2015 --global-name=Reactivity --outfile=dist/web/index.js",
+        "build": "pnpm clean; pnpm build:ts && pnpm build:web",
+        "publish-package": "pnpm build && pnpm publish --access=public"
+    },
+    "repository": "coderkearns/reactivity",
+    "author": "coderkearns",
+    "license": "MIT",
+    "files": [
+        "dist",
+        "lib"
+    ],
+    "devDependencies": {
+        "esbuild": "^0.17.10",
+        "typescript": "^5.0.4"
+    }
 }
