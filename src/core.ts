@@ -26,13 +26,13 @@ export function createReactive(item: unknown): Reactive {
 
     if (typeof item === "object") {
         if (Array.isArray(item)) {
-            return ReactiveArray(item)
+            return reactiveArray(item)
         } else if (item !== null) {
-            return ReactiveObject(item)
+            return reactiveObject(item)
         }
     }
 
-    return ReactiveValue(item)
+    return reactiveValue(item)
 }
 
 export interface BaseSubscription<T> extends Subscription<T> {
@@ -42,7 +42,7 @@ export interface BaseSubscription<T> extends Subscription<T> {
 /**
  * A simple subscription object, with no automatic binding done.
  */
-export function Subscription<T>(): BaseSubscription<T> {
+export function subscription<T>(): BaseSubscription<T> {
     const subscribers: Array<(value: T) => void> = []
     return {
         $subscribe(subscriber) {
@@ -62,14 +62,14 @@ export interface ReactiveValue<T> extends Subscription<T> {
 /**
  * A subscriptable value - like a variable with a subscription attached.
  * @example
- * const value = new ReactiveValue(10)
+ * const value = reactiveValue(10)
  * value.$subscribe(console.log)
  * value.get() // => 10
  * value.set(20) // logs 20
  * value.get() // => 20
  */
-export function ReactiveValue<T>(initialValue: T) {
-    const _subscription = Subscription<T>()
+export function reactiveValue<T>(initialValue: T) {
+    const _subscription = subscription<T>()
     let _value = initialValue
     return {
         $subscribe: _subscription.$subscribe,
@@ -87,14 +87,15 @@ export interface ReactiveArray<T> extends Subscription<[number, T | undefined]> 
     get(index: number): T
     set(index: number, value: T): void
     push(value: T): void
-    pop(): T | undefined
+    pop(): T | undefined,
+    static(): Array<T>
 }
 
 /**
  * A subscriptable array.
  * Acts as a proxy to a real array, but also holds a subscription.
  * @example
- * const array = new ReactiveArray(["a"])
+ * const array = reactiveArray(["a"])
  * array.$subscribe(console.log)
  * array.get(0) // => "a"
  * array.push("b") // logs [1, "b"]
@@ -102,8 +103,8 @@ export interface ReactiveArray<T> extends Subscription<[number, T | undefined]> 
  * array.pop() // logs [-1, "a"]
  * array.pop() // logs [-1, undefined]
  */
-export function ReactiveArray<T>(initialValue: T[]): ReactiveArray<T> {
-    const _subscription = Subscription<[number, T | undefined]>()
+export function reactiveArray<T>(initialValue: T[]): ReactiveArray<T> {
+    const _subscription = subscription<[number, T | undefined]>()
     let _value = [...initialValue]
     return {
         $subscribe: _subscription.$subscribe,
@@ -122,6 +123,9 @@ export function ReactiveArray<T>(initialValue: T[]): ReactiveArray<T> {
             let ret = _value.pop()
             _subscription.$publish([-1, ret])
             return ret
+        },
+        static(): Array<T> {
+            return _value
         }
     }
 }
@@ -129,21 +133,22 @@ export function ReactiveArray<T>(initialValue: T[]): ReactiveArray<T> {
 export interface ReactiveObject<T> extends Subscription<[keyof T, T[keyof T]]> {
     get<K extends keyof T>(key: K): T[K]
     set<K extends keyof T>(key: K, value: T[K]): void
-    mutate<K extends keyof T>(key: K, updater: (value: T[K]) => T[K]): void
+    mutate<K extends keyof T>(key: K, updater: (value: T[K]) => T[K]): void,
+    static(): T
 }
 
 /**
  * A subscriptable object.
  * Acts as a proxy to a real object, but also holds a subscription.
  * @example
- * const object = new ReactiveObject({a: 1, b: 2, c: [1, 2, 3]})
+ * const object = reactiveObject({a: 1, b: 2, c: [1, 2, 3]})
  * object.$subscribe(console.log)
  * object.get("a") // => 1
  * object.set("b", 3) // logs ["b", 3]
  * object.mutate("c", (arr) => arr.push(4)) // logs ["c", [1, 2, 3, 4]]
  */
-export function ReactiveObject<T>(initialValue: T): ReactiveObject<T> {
-    const _subscription = Subscription<[keyof T, T[keyof T]]>()
+export function reactiveObject<T>(initialValue: T): ReactiveObject<T> {
+    const _subscription = subscription<[keyof T, T[keyof T]]>()
     let _value = initialValue
     return {
         $subscribe: _subscription.$subscribe,
@@ -157,6 +162,9 @@ export function ReactiveObject<T>(initialValue: T): ReactiveObject<T> {
         mutate<K extends keyof T>(key: K, updater: (value: T[K]) => T[K]): void {
             updater(_value[key])
             _subscription.$publish([key, _value[key]])
+        },
+        static(): T {
+            return _value
         }
     }
 }

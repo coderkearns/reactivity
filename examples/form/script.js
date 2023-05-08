@@ -4,5 +4,5 @@ const outputEl = document.getElementById("output")
 const form = Reactivity.bindings.form(formEl)
 
 form.$subscribe(() => {
-    outputEl.textContent = JSON.stringify(form.$static())
+    outputEl.textContent = JSON.stringify(form.static())
 })

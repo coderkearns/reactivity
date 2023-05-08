@@ -1,17 +1,17 @@
 {
     "name": "@coderkearns/reactivity",
-    "version": "3.3.0",
+    "version": "3.4.0",
     "description": "My personal reactivity library",
     "main": "lib/index.js",
     "exports": {
         ".": {
-            "require": "./cjs/index.js",
-            "import": "./lib/index.js"
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/esm/index.js"
         },
-        "./*": "./*.js",
-        "./package": "./package.json",
+        "./*": "./lib/*",
         "./package.json": "./package.json"
     },
+    "types": "./dist/types/index.d.ts",
     "scripts": {
         "clean": "rm -rf dist",
         "build:ts": "tsc -b ./tsconfig.*.json",
@@ -24,7 +24,7 @@
     "license": "MIT",
     "files": [
         "dist",
-        "lib"
+        "src"
     ],
     "devDependencies": {
         "esbuild": "^0.17.10",
