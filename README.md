@@ -99,12 +99,8 @@ const settings = reactiveObject<{
 }>({
     title: "Untitled Note",
     content: "This note has no content",
-    saved: false,
-    tags: ["examples", "empty"]
-})
-
-settings.$subscribe(([key, value]) => {
-    fs.writeFileSync("settings.json", JSON.stringify(settings.static()))
+    tags: ["examples", "empty"],
+    saved: false
 })
 
 const titleInput = document.getElementById("title")
@@ -113,18 +109,19 @@ const saveButton = document.getElementById("save")
 
 titleInput.oninput = () => {
     settings.set("title", titleInput.value)
-    settings.set("saved", false)
 }
+
 contentInput.oninput = () => {
     settings.set("content", contentInput.value)
-    settings.set("saved", false)
 }
 
-function saveCurrentNote() {
-    fetch("/save/note/or/whatever").then(() => settings.set("saved", true))
-}
+settings.$subscribe(([key, value]) => {
+    if (key !== "saved") {
+        settings.set("saved", false)
+        fetch("/save/note/or/whatever").then(() => settings.set("saved", true))
+    }
+})
 
-saveButton.onclick = saveCurrentNote
 ```
 
 ## License
